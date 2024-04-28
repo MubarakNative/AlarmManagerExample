@@ -6,11 +6,15 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.mbexample.alarmmanager.R
 import com.mbexample.alarmmanager.data.sources.local.Alarm
 import com.mbexample.alarmmanager.databinding.AlarmListItemBinding
+import com.mbexample.alarmmanager.utils.Event
 import java.text.DateFormat
 
-class AlarmItemAdapter: ListAdapter<Alarm, AlarmItemAdapter.HomeViewHolder>(diffCallBack) {
+class AlarmItemAdapter (
+    private val alarmItemDismissClickListener: AlarmItemDismissClickListener
+): ListAdapter<Alarm, AlarmItemAdapter.HomeViewHolder>(diffCallBack) {
 
     inner class HomeViewHolder(private val binding: AlarmListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -21,8 +25,11 @@ class AlarmItemAdapter: ListAdapter<Alarm, AlarmItemAdapter.HomeViewHolder>(diff
                 tvTitle.text = alarm.title
                 tvDesc.text = alarm.message
                 val df: DateFormat = DateFormat.getTimeInstance()
-                val formattedDate = df.format(alarm.scheduleAt)
-                tvAlarmTime.text = formattedDate
+                tvAlarmTime.text = df.format(alarm.scheduleAt)
+                btnDismiss.setOnClickListener {
+                    alarmItemDismissClickListener.onAlarmItemDismissClick(Event(Unit))
+                    tvAlarmTime.isEnabled = false
+                }
             }
         }
     }
@@ -48,6 +55,11 @@ class AlarmItemAdapter: ListAdapter<Alarm, AlarmItemAdapter.HomeViewHolder>(diff
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val currentItem = getItem(position)
         holder.bind(currentItem)
+    }
+
+    interface AlarmItemDismissClickListener {
+        fun onAlarmItemDismissClick(alarm: Event<Unit>)
+
     }
 
 }

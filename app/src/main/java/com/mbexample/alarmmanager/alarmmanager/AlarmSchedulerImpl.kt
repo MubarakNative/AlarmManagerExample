@@ -7,6 +7,8 @@ import android.content.Intent
 import android.os.Build
 import com.mbexample.alarmmanager.data.sources.local.Alarm
 import com.mbexample.alarmmanager.receiver.AlarmReceiver
+import com.mbexample.alarmmanager.utils.Constants.MESSAGE
+import com.mbexample.alarmmanager.utils.Constants.TITLE
 
 class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
 
@@ -16,10 +18,10 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            alarm.id,
+            alarm.hashCode(),
             Intent(context, AlarmReceiver::class.java).apply {
-                putExtra("TITLE", alarm.title)
-                putExtra("MESSAGE", alarm.message)
+                putExtra(TITLE, alarm.title)
+                putExtra(MESSAGE, alarm.message)
             },
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -42,7 +44,7 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
-                alarm.id,
+                alarm.hashCode(),
                 Intent(context, AlarmReceiver::class.java),
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )

@@ -19,6 +19,10 @@ class AlarmRepositoryImpl @Inject constructor(
         alarmDatabase.getAlarmDao.upsertAlarm(alarm)
     }
 
+    override fun getAlarmById(alarmId: Long): Alarm {
+       return alarmDatabase.getAlarmDao.getAlarmById(alarmId)
+    }
+
     override fun getAllAlarm(): Flow<List<Alarm>> {
         return alarmDatabase.getAlarmDao.getAllAlarms()
     }

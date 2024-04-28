@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.format.DateFormat
+import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -41,7 +42,6 @@ class AlarmActivity : AppCompatActivity() {
     private lateinit var alarmSchedulerImpl: AlarmSchedulerImpl
     private var alarm: Alarm? = null
 
-
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +49,7 @@ class AlarmActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(binding.root)
 
-        adapter = AlarmItemAdapter()
+        adapter = AlarmItemAdapter(viewModel)
         alarmSchedulerImpl = AlarmSchedulerImpl(this)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -64,6 +64,12 @@ class AlarmActivity : AppCompatActivity() {
             adapter.submitList(it)
         }
 
+        viewModel.onAlarmDismissItemClick.observe(this) { onDismissClick ->
+            onDismissClick.getContentIfNotHandled()?.let {
+                alarm?.let(alarmSchedulerImpl::cancel)
+            }
+        }
+
         binding.alarmList.adapter = adapter
 
         binding.createAlarm.setOnClickListener {
@@ -76,7 +82,6 @@ class AlarmActivity : AppCompatActivity() {
                 )
             }
         }
-
     }
 
     private val activityResultLauncher = registerForActivityResult(
@@ -97,14 +102,13 @@ class AlarmActivity : AppCompatActivity() {
             R.string.pick_time
         ) { dialog, _ ->
 
-            val etTitle = view.findViewById<EditText>(R.id.tvTitle)
-            val etMsg = view.findViewById<EditText>(R.id.tvDesc)
+            val etTitle = view.findViewById<EditText>(R.id.etTitle)
+            val etMsg = view.findViewById<EditText>(R.id.etDesc)
 
             val title = etTitle.text.toString()
             val desc = etMsg.text.toString()
             if (title.isBlank() || desc.isBlank()) {
-                etTitle.error = "Field is required"
-                etMsg.error = "Field is required"
+                Toast.makeText(this, R.string.msg_missing_field, Toast.LENGTH_SHORT).show()
             } else {
                 openTimePicker(etTitle.text.toString(), etMsg.text.toString())
                 dialog.dismiss()
@@ -123,12 +127,12 @@ class AlarmActivity : AppCompatActivity() {
     private fun showEducationalDialog() {
         val dialog = MaterialAlertDialogBuilder(this)
             .setTitle(R.string.permission_denied)
-            .setMessage("To send a notification when alarm is triggered we need a permission")
-            .setNegativeButton("Close") { dialog, _ ->
+            .setMessage(R.string.request_msg)
+            .setNegativeButton(R.string.close) { dialog, _ ->
                 dialog.dismiss()
                 finish()
             }
-            .setPositiveButton("Settings") { dialog, _ ->
+            .setPositiveButton(R.string.settings) { dialog, _ ->
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 val uri = Uri.fromParts("package", packageName, null)
                 intent.setData(uri)
@@ -159,7 +163,6 @@ class AlarmActivity : AppCompatActivity() {
             .build()
 
         dialog.addOnPositiveButtonClickListener {
-            Toast.makeText(this, "${dialog.hour}:${dialog.minute}", Toast.LENGTH_LONG).show()
             createAlarm(title, message, dialog.hour, dialog.minute)
         }
         dialog.addOnNegativeButtonClickListener {
@@ -177,7 +180,7 @@ class AlarmActivity : AppCompatActivity() {
         calendar.set(Calendar.MINUTE, min)
         calendar.set(Calendar.SECOND, 0)
         alarm = Alarm(
-            0,
+            0L,
             title,
             message,
             calendar.timeInMillis

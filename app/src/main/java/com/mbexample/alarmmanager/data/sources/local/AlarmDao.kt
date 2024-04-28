@@ -20,6 +20,9 @@ interface AlarmDao {
     @Delete
     suspend fun deleteAlarm(alarm: Alarm)
 
+    @Query("SELECT * FROM Alarm WHERE id = :alarmId ")
+    fun getAlarmById(alarmId: Long): Alarm
+
     @Query("SELECT * FROM Alarm ORDER BY id DESC")
     fun getAllAlarms(): Flow<List<Alarm>>
 
