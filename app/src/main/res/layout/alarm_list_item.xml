@@ -10,6 +10,7 @@
         xmlns:tools="http://schemas.android.com/tools">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/parentCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="?attr/materialCardViewFilledStyle"
@@ -60,8 +61,10 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@+id/listParent"
                     app:layout_constraintTop_toBottomOf="@+id/tvAlarmTime"
+                    app:layout_constraintVertical_bias="0.16"
                     tools:text="Description" />
 
                 <Button

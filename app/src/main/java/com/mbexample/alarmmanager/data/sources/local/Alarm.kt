@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class Alarm(
 
     @PrimaryKey(true)
-    val id:Int,
+    var id:Long,
     val title: String,
     val message: String,
     val scheduleAt:Long
