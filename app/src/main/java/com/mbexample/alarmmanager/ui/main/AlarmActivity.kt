@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.format.DateFormat
-import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -25,7 +24,7 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOCK
 import com.google.android.material.timepicker.TimeFormat
 import com.mbexample.alarmmanager.R
-import com.mbexample.alarmmanager.alarmmanager.AlarmSchedulerImpl
+import com.mbexample.alarmmanager.alarm.AlarmSchedulerImpl
 import com.mbexample.alarmmanager.data.sources.local.Alarm
 import com.mbexample.alarmmanager.databinding.ActivityAlarmBinding
 import com.mbexample.alarmmanager.ui.AlarmItemAdapter
@@ -50,6 +49,7 @@ class AlarmActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         adapter = AlarmItemAdapter(viewModel)
+        adapter.touchHelper.attachToRecyclerView(binding.alarmList)
         alarmSchedulerImpl = AlarmSchedulerImpl(this)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -62,6 +62,13 @@ class AlarmActivity : AppCompatActivity() {
 
         viewModel.getAllAlarm.observe(this) {
             adapter.submitList(it)
+        }
+
+        viewModel.onAlarmItemSwipe.observe(this){
+            it.getContentIfNotHandled()?.let {alarmItem ->
+                alarm?.let(alarmSchedulerImpl::cancel)
+                viewModel.deleteAlarmItemById(alarmItem.id)
+            }
         }
 
         viewModel.onAlarmDismissItemClick.observe(this) { onDismissClick ->
