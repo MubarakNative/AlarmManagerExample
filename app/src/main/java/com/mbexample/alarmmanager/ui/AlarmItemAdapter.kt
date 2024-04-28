@@ -4,11 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mbexample.alarmmanager.R
 import com.mbexample.alarmmanager.data.sources.local.Alarm
 import com.mbexample.alarmmanager.databinding.AlarmListItemBinding
+import com.mbexample.alarmmanager.ui.main.SwipeItemHelper
 import com.mbexample.alarmmanager.utils.Event
 import java.text.DateFormat
 
@@ -57,9 +59,12 @@ class AlarmItemAdapter (
         holder.bind(currentItem)
     }
 
+    val touchHelper = ItemTouchHelper(SwipeItemHelper(this.alarmItemDismissClickListener, this))
+
+
     interface AlarmItemDismissClickListener {
         fun onAlarmItemDismissClick(alarm: Event<Unit>)
-
+        fun onAlarmItemSwipe(alarm: Alarm)
     }
 
 }

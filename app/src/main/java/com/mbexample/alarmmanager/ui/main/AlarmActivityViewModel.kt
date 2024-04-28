@@ -18,6 +18,9 @@ class AlarmActivityViewModel @Inject constructor(
     private val alarmRepository: AlarmRepository
 ):ViewModel(),AlarmItemAdapter.AlarmItemDismissClickListener {
 
+    private val _onAlarmItemSwipe = MutableLiveData<Event<Alarm>>()
+    val onAlarmItemSwipe: LiveData<Event<Alarm>> = _onAlarmItemSwipe
+
     private val _onAlarmDismissItemClick = MutableLiveData<Event<Unit>>()
     val onAlarmDismissItemClick: LiveData<Event<Unit>> = _onAlarmDismissItemClick
 
@@ -25,9 +28,17 @@ class AlarmActivityViewModel @Inject constructor(
         alarmRepository.insertAlarm(alarm)
     }
 
+    fun deleteAlarmItemById(alarmId: Long)= viewModelScope.launch{
+        alarmRepository.deleteAlarmById(alarmId)
+    }
+
     val getAllAlarm = alarmRepository.getAllAlarm().asLiveData()
 
     override fun onAlarmItemDismissClick(alarm: Event<Unit>) {
         _onAlarmDismissItemClick.value = Event(Unit)
+    }
+
+    override fun onAlarmItemSwipe(alarm: Alarm) {
+        _onAlarmItemSwipe.value = Event(alarm)
     }
 }

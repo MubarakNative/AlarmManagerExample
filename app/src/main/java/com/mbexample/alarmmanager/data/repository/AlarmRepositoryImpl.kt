@@ -31,7 +31,7 @@ class AlarmRepositoryImpl @Inject constructor(
         alarmDatabase.getAlarmDao.deleteAlarm(alarm)
     }
 
-    override suspend fun deleteAlarmById(alarmId:Int) {
+    override suspend fun deleteAlarmById(alarmId:Long) {
         alarmDatabase.getAlarmDao.deleteAlarmById(alarmId)
     }
 

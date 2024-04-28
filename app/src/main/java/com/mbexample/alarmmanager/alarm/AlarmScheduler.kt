@@ -1,4 +1,4 @@
-package com.mbexample.alarmmanager.alarmmanager
+package com.mbexample.alarmmanager.alarm
 
 import com.mbexample.alarmmanager.data.sources.local.Alarm
 
