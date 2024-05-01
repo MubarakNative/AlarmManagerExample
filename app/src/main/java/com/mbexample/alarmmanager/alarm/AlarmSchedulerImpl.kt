@@ -8,6 +8,7 @@ import android.os.Build
 import com.mbexample.alarmmanager.alarm.AlarmScheduler
 import com.mbexample.alarmmanager.data.sources.local.Alarm
 import com.mbexample.alarmmanager.receiver.AlarmReceiver
+import com.mbexample.alarmmanager.utils.Constants.ALARM_ID
 import com.mbexample.alarmmanager.utils.Constants.MESSAGE
 import com.mbexample.alarmmanager.utils.Constants.TITLE
 
@@ -23,6 +24,7 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
             Intent(context, AlarmReceiver::class.java).apply {
                 putExtra(TITLE, alarm.title)
                 putExtra(MESSAGE, alarm.message)
+                putExtra(ALARM_ID, alarm.id)
             },
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
