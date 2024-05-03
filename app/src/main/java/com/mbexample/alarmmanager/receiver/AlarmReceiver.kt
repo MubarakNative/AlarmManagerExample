@@ -55,10 +55,10 @@ class AlarmReceiver : BroadcastReceiver() {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val pendingIntent: PendingIntent =
-            PendingIntent.getActivity(context, 0, goIntent, PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getActivity(context, 1, goIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val stopPendingIntent = PendingIntent.getBroadcast(
-            context, 0, Intent(context, AlarmReceiver::class.java).apply {
+            context, 1, Intent(context, AlarmReceiver::class.java).apply {
                 action = STOP_ALARM
                 putExtra(ALARM_ID, alarmId)
             },
