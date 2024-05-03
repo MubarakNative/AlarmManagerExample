@@ -102,7 +102,7 @@ class AlarmActivity : AppCompatActivity() {
     }
 
     private fun openDialog() {
-        val builder = AlertDialog.Builder(this)
+        val builder = MaterialAlertDialogBuilder(this)
         val view = layoutInflater.inflate(R.layout.dialog_create_alarm, null)
         builder.setCancelable(false)
         builder.setView(view).setPositiveButton(
